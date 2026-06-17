@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat WebSocket</title>
+  <style>
+    body { font-family: Arial; margin: 30px; }
+    #mensajes { border: 1px solid #ccc; padding: 10px; min-height: 200px; }
+    input, button { padding: 10px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Chat en tiempo real</h1>
+
+  <div id="mensajes"></div>
+    <input id="usuarioInput" placeholder="Tu nombre">
+    <input id="mensajeInput" placeholder="Escribe un mensaje">
+    <button onclick="enviarMensaje()">Enviar</button>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const mensajes = document.getElementById("mensajes");
+    const mensajeInput = document.getElementById("mensajeInput");
+
+   function enviarMensaje() {
+  const texto = mensajeInput.value.trim();
+  const usuario = document.getElementById("usuarioInput").value.trim();
+
+  if (texto === "" || usuario === "") return;
+
+  socket.emit("mensaje", {
+    usuario: usuario,
+    texto: texto
+  });
+}
+
+    socket.on("mensaje", (data) => {
+      const p = document.createElement("p");
+      p.innerHTML = `<strong>${data.usuario}:</strong> ${data.texto}`;
+      mensajes.appendChild(p);
+    });
+  </script>
+
+</body>
+</html>
